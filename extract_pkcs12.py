@@ -5,6 +5,14 @@ import getpass
 from OpenSSL import crypto
 from OpenSSL.crypto import PKCS12
 
+def find_between( s, first, last ):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
+
 #Lets see how we are called in
 if (len(sys.argv) != 2) : 
 	print "Incorrect number of arguements, expected 1, received ", len(sys.argv) - 1 
@@ -27,14 +35,13 @@ x509string = crypto.dump_certificate(crypto.FILETYPE_PEM, p12.get_certificate())
 x509 = crypto.load_certificate(crypto.FILETYPE_PEM, x509string)
 	
 print "\nSummary"
-print "Subject"
-print str(x509.get_subject())
+print find_between(str(x509.get_subject()), "'", "'")
 print "\nValid From:"
 print x509.get_notBefore()
 print "\nValid Till:"
 print x509.get_notAfter()
 print "\nIssuer"
-print str(x509.get_issuer())
+print find_between(str(x509.get_issuer()), "'", "'")
 
 print "\n\nCertificate"
 print crypto.dump_certificate(crypto.FILETYPE_PEM, p12.get_certificate())
